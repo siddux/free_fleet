@@ -47,9 +47,12 @@ bool Server::ServerImpl::read_robot_states(
     _new_robot_states.clear();
     for (size_t i = 0; i < robot_states.size(); ++i)
     {
-      messages::RobotState tmp_robot_state;
-      convert(*(robot_states[i]), tmp_robot_state);
-      _new_robot_states.push_back(tmp_robot_state);
+      if ((*robot_states[i]).name != NULL)
+      {
+        messages::RobotState tmp_robot_state;
+        convert(*(robot_states[i]), tmp_robot_state);
+        _new_robot_states.push_back(tmp_robot_state);
+      }
     }
     return true;
   }
