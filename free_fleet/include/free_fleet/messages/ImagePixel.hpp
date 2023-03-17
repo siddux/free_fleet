@@ -15,34 +15,20 @@
  *
  */
 
-#ifndef FREE_FLEET__INCLUDE__FREE_FLEET__MESSAGES__ROBOTIMAGE_HPP
-#define FREE_FLEET__INCLUDE__FREE_FLEET__MESSAGES__ROBOTIMAGE_HPP
+#ifndef FREE_FLEET__INCLUDE__FREE_FLEET__MESSAGES__IMAGEPIXEL_HPP
+#define FREE_FLEET__INCLUDE__FREE_FLEET__MESSAGES__IMAGEPIXEL_HPP
 
 #include <cstdint>
-#include <string>
-#include <vector>
-
-#include "Header.hpp"
-#include "ImagePixel.hpp"
-
 
 namespace free_fleet {
 namespace messages {
 
-struct RobotImage
+struct ImagePixel
 {
-  std::string fleet_name;
-  std::string robot_name;
-  Header image_header;
-  uint32_t height;
-  uint32_t width;
-  std::string encoding;
-  bool is_bigendian;
-  uint32_t step;
-  std::vector<ImagePixel> data;
+  uint32_t pixel;
 };
 
 } // namespace messages
 } // namespace free_fleet
 
-#endif // FREE_FLEET__INCLUDE__FREE_FLEET__MESSAGES__ROBOTIMAGE_HPP
+#endif // FREE_FLEET__INCLUDE__FREE_FLEET__MESSAGES__IMAGEPIXEL_HPP
