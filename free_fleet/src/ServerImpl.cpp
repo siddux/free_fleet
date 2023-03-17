@@ -87,4 +87,22 @@ bool Server::ServerImpl::send_destination_request(
   return sent;
 }
 
+bool Server::ServerImpl::read_robot_images(
+    std::vector<messages::RobotImage>& _new_robot_images)
+{
+  auto robot_images = fields.robot_image_sub->read();
+  if (!robot_images.empty())
+  {
+    _new_robot_images.clear();
+    for (size_t i = 0; i < robot_images.size(); ++i)
+    {
+      messages::RobotImage tmp_robot_image;
+      convert(*(robot_images[i]), tmp_robot_image);
+      _new_robot_images.push_back(tmp_robot_image);
+    }
+    return true;
+  }
+  return false;
+}
+
 } // namespace free_fleet

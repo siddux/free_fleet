@@ -24,6 +24,7 @@
 #include <free_fleet/ServerConfig.hpp>
 
 #include <free_fleet/messages/RobotState.hpp>
+#include <free_fleet/messages/RobotImage.hpp>
 #include <free_fleet/messages/ModeRequest.hpp>
 #include <free_fleet/messages/PathRequest.hpp>
 #include <free_fleet/messages/DestinationRequest.hpp>
@@ -81,6 +82,16 @@ public:
   ///   True if the destination request was successfully sent, false otherwise.
   bool send_destination_request(
       const messages::DestinationRequest& destination_request);
+
+  /// Attempts to read new incoming robot images sent by free fleet clients
+  /// over DDS.
+  ///
+  /// \param[out] new_robot_images
+  ///   A vector of new incoming robot images sent by clients to update the
+  ///   fleet management system.
+  /// \return
+  ///   True if new robot images were received, false otherwise.
+  bool read_robot_images(std::vector<messages::RobotImage>& new_robot_images);
 
   /// Destructor
   ~Server();

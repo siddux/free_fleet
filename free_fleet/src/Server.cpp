@@ -61,11 +61,17 @@ Server::SharedPtr Server::make(const ServerConfig& _config)
           new dds::DDSPublishHandler<FreeFleetData_DestinationRequest>(
               participant, &FreeFleetData_DestinationRequest_desc,
               _config.dds_destination_request_topic));
+  
+  dds::DDSSubscribeHandler<FreeFleetData_RobotImage, 10>::SharedPtr image_sub(
+      new dds::DDSSubscribeHandler<FreeFleetData_RobotImage, 10>(
+          participant, &FreeFleetData_RobotImage_desc,
+          _config.dds_robot_image_topic));
 
   if (!state_sub->is_ready() ||
       !mode_request_pub->is_ready() ||
       !path_request_pub->is_ready() ||
-      !destination_request_pub->is_ready())
+      !destination_request_pub->is_ready() ||
+      !image_sub->is_ready())
     return nullptr;
 
   server->impl->start(ServerImpl::Fields{
@@ -73,7 +79,8 @@ Server::SharedPtr Server::make(const ServerConfig& _config)
       std::move(state_sub),
       std::move(mode_request_pub),
       std::move(path_request_pub),
-      std::move(destination_request_pub)});
+      std::move(destination_request_pub),
+      std::move(image_sub)});
   return server;
 }
 
@@ -105,6 +112,12 @@ bool Server::send_destination_request(
     const messages::DestinationRequest& _destination_request)
 {
   return impl->send_destination_request(_destination_request);
+}
+
+bool Server::read_robot_images(
+    std::vector<messages::RobotImage>& _new_robot_images)
+{
+  return impl->read_robot_images(_new_robot_images);
 }
 
 } // namespace free_fleet
