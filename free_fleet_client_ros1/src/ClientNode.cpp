@@ -106,6 +106,10 @@ void ClientNode::start(Fields _fields)
       client_node_config.battery_state_topic, 1,
       &ClientNode::battery_state_callback_fn, this);
 
+  camera_image_sub = node->subscribe(
+      client_node_config.robot_image_topic, 1,
+      &ClientNode::robot_image_callback_fn, this);
+
   request_error = false;
   emergency = false;
   paused = false;
@@ -128,6 +132,13 @@ void ClientNode::battery_state_callback_fn(
 {
   WriteLock battery_state_lock(battery_state_mutex);
   current_battery_state = _msg;
+}
+
+void ClientNode::robot_image_callback_fn(
+    const sensor_msgs::Image& _msg)
+{
+  WriteLock robot_image_lock(robot_image_mutex);
+  current_robot_image = _msg;
 }
 
 bool ClientNode::get_robot_transform()
@@ -243,6 +254,36 @@ void ClientNode::publish_robot_state()
 
   if (!fields.client->send_robot_state(new_robot_state))
     ROS_WARN("failed to send robot state: msg sec %u", new_robot_state.location.sec);
+}
+
+void ClientNode::publish_robot_image()
+{
+  messages::RobotImage new_robot_image;
+  messages::Header new_image_header;
+  messages::ImagePixel new_image_pixel;
+  new_robot_image.fleet_name = client_node_config.fleet_name;
+  new_robot_image.robot_name = client_node_config.robot_name;
+
+  new_robot_image.data.clear();
+  {
+    ReadLock robot_image_lock(robot_image_mutex);
+    new_image_header.seq = current_robot_image.header.seq;
+    new_image_header.frame_id = current_robot_image.header.frame_id;
+    new_robot_image.height = current_robot_image.height;
+    new_robot_image.width = current_robot_image.width;
+    new_robot_image.encoding = current_robot_image.encoding;
+    new_robot_image.is_bigendian = current_robot_image.is_bigendian;
+    new_robot_image.step = current_robot_image.step;
+
+    for (size_t i = 0; i < current_robot_image.data.size(); ++i)
+    {
+      new_image_pixel.pixel = current_robot_image.data[i];
+      new_robot_image.data.push_back(new_image_pixel);
+    }
+  }
+
+  if (!fields.client->send_robot_image(new_robot_image))
+    ROS_WARN("failed to send robot image");
 }
 
 bool ClientNode::is_valid_request(
@@ -555,6 +596,8 @@ void ClientNode::publish_thread_fn()
     publish_rate->sleep();
 
     publish_robot_state();
+
+    publish_robot_image();
   }
 }
 

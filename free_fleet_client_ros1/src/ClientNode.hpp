@@ -29,6 +29,7 @@
 #include <std_msgs/String.h>
 #include <std_srvs/Trigger.h>
 #include <sensor_msgs/BatteryState.h>
+#include <sensor_msgs/Image.h>
 #include <tf2_ros/transform_listener.h>
 #include <geometry_msgs/TransformStamped.h>
 
@@ -98,6 +99,17 @@ private:
   sensor_msgs::BatteryState current_battery_state;
 
   void battery_state_callback_fn(const sensor_msgs::BatteryState& msg);
+
+  // --------------------------------------------------------------------------
+  // Camera handling
+
+  ros::Subscriber camera_image_sub;
+
+  std::mutex robot_image_mutex;
+
+  sensor_msgs::Image current_robot_image;
+
+  void robot_image_callback_fn(const sensor_msgs::Image& msg);
 
   // --------------------------------------------------------------------------
   // Robot transform handling
@@ -171,6 +183,8 @@ private:
   void handle_requests();
 
   void publish_robot_state();
+
+  void publish_robot_image();
 
   // --------------------------------------------------------------------------
   // Threads and thread functions

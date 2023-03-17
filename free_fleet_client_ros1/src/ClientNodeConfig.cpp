@@ -77,6 +77,7 @@ void ClientNodeConfig::print_config() const
       max_dist_to_first_waypoint);
   printf("  TOPICS\n");
   printf("    battery state: %s\n", battery_state_topic.c_str());
+  printf("    robot image topic: %s\n", robot_image_topic.c_str());
   printf("    move base server: %s\n", move_base_server_name.c_str());
   printf("    docking trigger server: %s\n", docking_trigger_server_name.c_str());
   printf("  ROBOT FRAMES\n");
@@ -86,6 +87,7 @@ void ClientNodeConfig::print_config() const
   printf("  dds domain: %d\n", dds_domain);
   printf("  TOPICS\n");
   printf("    robot state: %s\n", dds_state_topic.c_str());
+  printf("    robot image: %s\n", dds_image_topic.c_str());
   printf("    mode request: %s\n", dds_mode_request_topic.c_str());
   printf("    path request: %s\n", dds_path_request_topic.c_str());
   printf("    destination request: %s\n", 
@@ -97,6 +99,7 @@ ClientConfig ClientNodeConfig::get_client_config() const
   ClientConfig client_config;
   client_config.dds_domain = dds_domain;
   client_config.dds_state_topic = dds_state_topic;
+  client_config.dds_image_topic = dds_image_topic;
   client_config.dds_mode_request_topic = dds_mode_request_topic;
   client_config.dds_path_request_topic = dds_path_request_topic;
   client_config.dds_destination_request_topic = dds_destination_request_topic;
@@ -117,6 +120,8 @@ ClientNodeConfig ClientNodeConfig::make()
       node_private_ns, "level_name", config.level_name);
   config.get_param_if_available(
       node_private_ns, "battery_state_topic", config.battery_state_topic);
+  config.get_param_if_available(
+      node_private_ns, "robot_image_topic", config.robot_image_topic);
   config.get_param_if_available(node_private_ns, "map_frame", config.map_frame);
   config.get_param_if_available(
       node_private_ns, "robot_frame", config.robot_frame);

@@ -38,6 +38,7 @@ struct ClientNodeConfig
   std::string level_name = "level_name";
 
   std::string battery_state_topic = "/battery_state";
+  std::string robot_image_topic = "/robot_image";
 
   std::string map_frame = "map";
   std::string robot_frame = "base_footprint";
@@ -51,6 +52,7 @@ struct ClientNodeConfig
   std::string dds_mode_request_topic = "mode_request";
   std::string dds_path_request_topic = "path_request";
   std::string dds_destination_request_topic = "destination_request";
+  std::string dds_image_topic = "robot_image";
 
   double wait_timeout = 10.0;
   double update_frequency = 10.0;
