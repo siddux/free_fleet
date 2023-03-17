@@ -35,6 +35,23 @@ module FreeFleetData
     Location location;
     sequence<Location> path;
   };
+  struct Header
+  {
+    unsigned long seq;
+    string frame_id;
+  };
+  struct RobotImage
+  {
+    string fleet_name;
+    string robot_name;
+    Header image_header;
+    unsigned long height;
+    unsigned long width;
+    string encoding;
+    boolean is_bigendian;
+    unsigned long step;
+    sequence<unsigned long> data;
+  };
   struct ModeParameter
   {
     string name;
