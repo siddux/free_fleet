@@ -40,6 +40,10 @@ module FreeFleetData
     unsigned long seq;
     string frame_id;
   };
+  struct ImagePixel
+  {
+    unsigned long pixel;
+  };
   struct RobotImage
   {
     string fleet_name;
@@ -50,7 +54,7 @@ module FreeFleetData
     string encoding;
     boolean is_bigendian;
     unsigned long step;
-    sequence<unsigned long> data;
+    sequence<ImagePixel> data;
   };
   struct ModeParameter
   {
