@@ -172,6 +172,16 @@ void convert(const FreeFleetData_PathRequest& _input, PathRequest& _output)
   _output.task_id = std::string(_input.task_id);
 }
 
+void convert(const ImagePixel& _input, FreeFleetData_ImagePixel& _output)
+{
+  _output.pixel = _input.pixel;
+}
+
+void convert(const FreeFleetData_ImagePixel _input, ImagePixel& _output)
+{
+  _output.pixel = _input.pixel;
+}
+
 void convert(const RobotImage& _input, FreeFleetData_RobotImage& _output)
 {
   _output.fleet_name = common::dds_string_alloc_and_copy(_input.fleet_name);
@@ -186,10 +196,12 @@ void convert(const RobotImage& _input, FreeFleetData_RobotImage& _output)
   size_t data_length = _input.data.size();
   _output.data._maximum = static_cast<uint32_t>(data_length);
   _output.data._length = static_cast<uint32_t>(data_length);
-  _output.data._buffer = ((uint32_t *) dds_alloc ((data_length) * sizeof (uint32_t)))
+  _output.data._buffer = FreeFleetData_RobotImage_data_seq_allocbuf(data_length);
   _output.data._release = false;
   for (size_t i = 0; i < data_length; ++i)
-    _input.data[i] = _output.data._buffer[i];
+  {
+    convert(_input.data[i],_output.data._buffer[i]);
+  }
 }
 
 void convert(const FreeFleetData_RobotImage& _input, RobotImage& _output)
@@ -205,7 +217,9 @@ void convert(const FreeFleetData_RobotImage& _input, RobotImage& _output)
   _output.data.clear();
   for (uint32_t i = 0; i < _input.data._length; ++i)
   {
-    _output.data.push_back(_input.data._buffer[i]);
+    ImagePixel tmp;
+    convert(_input.data._buffer[i], tmp);
+    _output.data.push_back(tmp);
   }
 }
 

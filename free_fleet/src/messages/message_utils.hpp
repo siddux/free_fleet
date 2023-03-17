@@ -18,6 +18,7 @@
 #ifndef FREE_FLEET__SRC__MESSAGES__MESSAGE_UTILS_HPP
 #define FREE_FLEET__SRC__MESSAGES__MESSAGE_UTILS_HPP
 
+#include <free_fleet/messages/ImagePixel.hpp>
 #include <free_fleet/messages/Location.hpp>
 #include <free_fleet/messages/RobotMode.hpp>
 #include <free_fleet/messages/RobotImage.hpp>
@@ -59,6 +60,10 @@ void convert(const FreeFleetData_PathRequest& _input, PathRequest& _output);
 void convert(const Header& _input, FreeFleetData_Header& _output);
 
 void convert(const FreeFleetData_Header _input, Header& _output);
+
+void convert(const ImagePixel& _input, FreeFleetData_ImagePixel& _output);
+
+void convert(const FreeFleetData_ImagePixel _input, ImagePixel& _output);
 
 void convert(const RobotImage& _input, FreeFleetData_RobotImage& _output);
 
