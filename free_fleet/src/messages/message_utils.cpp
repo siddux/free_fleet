@@ -172,6 +172,55 @@ void convert(const FreeFleetData_PathRequest& _input, PathRequest& _output)
   _output.task_id = std::string(_input.task_id);
 }
 
+void convert(const RobotImage& _input, FreeFleetData_RobotImage& _output)
+{
+  _output.fleet_name = common::dds_string_alloc_and_copy(_input.fleet_name);
+  _output.robot_name = common::dds_string_alloc_and_copy(_input.robot_name);
+  convert(_input.image_header, _output.image_header);
+  _output.height = _input.height;
+  _output.width = _input.width;
+  _output.encoding = common::dds_string_alloc_and_copy(_input.encoding);
+  _output.is_bigendian = _input.is_bigendian;
+  _output.step = _input.step;
+
+  size_t data_length = _input.data.size();
+  _output.data._maximum = static_cast<uint32_t>(data_length);
+  _output.data._length = static_cast<uint32_t>(data_length);
+  _output.data._buffer = ((uint32_t *) dds_alloc ((data_length) * sizeof (uint32_t)))
+  _output.data._release = false;
+  for (size_t i = 0; i < data_length; ++i)
+    _input.data[i] = _output.data._buffer[i];
+}
+
+void convert(const FreeFleetData_RobotImage& _input, RobotImage& _output)
+{
+  _output.fleet_name = std::string(_input.fleet_name);
+  _output.robot_name = std::string(_input.robot_name);
+  convert(_input.image_header, _output.image_header);
+  _output.height = _input.height;
+  _output.width = _input.width;
+  _output.encoding = std::string(_input.encoding);
+  _output.is_bigendian = _input.is_bigendian;
+  _output.step = _input.step;
+  _output.data.clear();
+  for (uint32_t i = 0; i < _input.data._length; ++i)
+  {
+    _output.data.push_back(_input.data._buffer[i]);
+  }
+}
+
+void convert(const Header& _input, FreeFleetData_Header& _output)
+{
+  _output.seq = _input.seq;
+  _output.frame_id = common::dds_string_alloc_and_copy(_input.frame_id);
+};
+
+void convert(const FreeFleetData_Header _input, Header& _output)
+{
+  _output.seq = _input.seq;
+  _output.frame_id = std::string(_input.frame_id);
+}
+
 void convert(
     const DestinationRequest& _input, 
     FreeFleetData_DestinationRequest& _output)

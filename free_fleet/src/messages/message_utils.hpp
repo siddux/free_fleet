@@ -20,6 +20,7 @@
 
 #include <free_fleet/messages/Location.hpp>
 #include <free_fleet/messages/RobotMode.hpp>
+#include <free_fleet/messages/RobotImage.hpp>
 #include <free_fleet/messages/RobotState.hpp>
 #include <free_fleet/messages/ModeParameter.hpp>
 #include <free_fleet/messages/ModeRequest.hpp>
@@ -54,6 +55,14 @@ void convert(const FreeFleetData_ModeRequest& _input, ModeRequest& _output);
 void convert(const PathRequest& _input, FreeFleetData_PathRequest& _output);
 
 void convert(const FreeFleetData_PathRequest& _input, PathRequest& _output);
+
+void convert(const Header& _input, FreeFleetData_Header& _output);
+
+void convert(const FreeFleetData_Header _input, Header& _output);
+
+void convert(const RobotImage& _input, FreeFleetData_RobotImage& _output);
+
+void convert(const FreeFleetData_RobotImage& _input, RobotImage& _output);
 
 void convert(
     const DestinationRequest& _input, 
