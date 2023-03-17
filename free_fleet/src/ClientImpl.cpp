@@ -84,4 +84,14 @@ bool Client::ClientImpl::read_destination_request(
   return false;
 }
 
+bool Client::ClientImpl::send_robot_image(
+    const messages::RobotImage& _new_robot_image)
+{
+  FreeFleetData_RobotImage* new_ri = ((FreeFleetData_RobotImage*) dds_alloc (sizeof (FreeFleetData_RobotImage)));
+  convert(_new_robot_image, *new_ri);
+  bool sent = fields.image_pub->write(new_ri);
+  FreeFleetData_RobotImage_free(new_ri, DDS_FREE_ALL);
+  return sent;
+}
+
 } // namespace free_fleet

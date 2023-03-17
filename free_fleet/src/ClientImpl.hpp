@@ -22,6 +22,7 @@
 #include <free_fleet/messages/ModeRequest.hpp>
 #include <free_fleet/messages/PathRequest.hpp>
 #include <free_fleet/messages/DestinationRequest.hpp>
+#include <free_fleet/messages/RobotImage.hpp>
 #include <free_fleet/Client.hpp>
 #include <free_fleet/ClientConfig.hpp>
 
@@ -59,6 +60,11 @@ public:
     /// DDS subscriber for destination requests coming from the server
     dds::DDSSubscribeHandler<FreeFleetData_DestinationRequest>::SharedPtr
         destination_request_sub;
+
+    /// DDS publisher that handles sending out current robot images to the 
+    /// server
+    dds::DDSPublishHandler<FreeFleetData_RobotImage>::SharedPtr
+        image_pub;
   };
 
   ClientImpl(const ClientConfig& config);
@@ -75,6 +81,8 @@ public:
 
   bool read_destination_request(
       messages::DestinationRequest& destination_request);
+
+  bool send_robot_image(const messages::RobotImage& new_robot_image);
 
 private:
 

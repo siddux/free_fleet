@@ -26,6 +26,7 @@
 #include <free_fleet/messages/ModeRequest.hpp>
 #include <free_fleet/messages/PathRequest.hpp>
 #include <free_fleet/messages/DestinationRequest.hpp>
+#include <free_fleet/messages/RobotImage.hpp>
 
 namespace free_fleet {
 
@@ -83,6 +84,16 @@ public:
   ///   True if a new destination request was received, false otherwise.
   bool read_destination_request(
       messages::DestinationRequest& destination_request);
+
+  /// Attempts to send a new robot image to the free fleet server, to be 
+  /// registered by the fleet management system.
+  ///
+  /// \param[in] new_robot_image
+  ///   Current robot image to be sent to the free fleet server to update the
+  ///   fleet management system.
+  /// \return
+  ///   True if robot image was successfully sent, false otherwise.
+  bool send_robot_image(const messages::RobotImage& new_robot_image);
 
   /// Destructor
   ~Client();
