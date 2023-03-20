@@ -38,7 +38,7 @@ struct ClientNodeConfig
   std::string level_name = "level_name";
 
   std::string battery_state_topic = "/battery_state";
-  std::string robot_image_topic = "/robot_image";
+  std::string robot_image_topic = "/camera/image";
 
   std::string map_frame = "map";
   std::string robot_frame = "base_footprint";
