@@ -33,10 +33,13 @@
 #include <rmf_fleet_msgs/msg/mode_request.hpp>
 #include <rmf_fleet_msgs/msg/path_request.hpp>
 #include <rmf_fleet_msgs/msg/destination_request.hpp>
+#include <rmf_fleet_msgs/msg/robot_image.hpp>
+#include <rmf_fleet_msgs/msg/fleet_image.hpp>
 
 #include <free_fleet/Server.hpp>
 #include <free_fleet/messages/Location.hpp>
 #include <free_fleet/messages/RobotState.hpp>
+#include <free_fleet/messages/RobotImage.hpp>
 
 #include "ServerNodeConfig.hpp"
 
@@ -120,6 +123,19 @@ private:
 
   // --------------------------------------------------------------------------
 
+  rclcpp::CallbackGroup::SharedPtr update_image_callback_group;
+
+  rclcpp::TimerBase::SharedPtr update_image_timer;
+
+  std::mutex robot_images_mutex;
+
+  std::unordered_map<std::string, rmf_fleet_msgs::msg::RobotImage>
+      robot_images;
+
+  void update_image_callback();
+
+  // --------------------------------------------------------------------------
+
   rclcpp::CallbackGroup::SharedPtr
       fleet_state_pub_callback_group;
 
@@ -129,6 +145,18 @@ private:
       fleet_state_pub;
 
   void publish_fleet_state();
+
+  // --------------------------------------------------------------------------
+
+  rclcpp::CallbackGroup::SharedPtr
+      fleet_image_pub_callback_group;
+
+  rclcpp::TimerBase::SharedPtr fleet_image_pub_timer;
+
+  rclcpp::Publisher<rmf_fleet_msgs::msg::FleetImage>::SharedPtr
+      fleet_image_pub;
+
+  void publish_fleet_image();
 
   // --------------------------------------------------------------------------
 

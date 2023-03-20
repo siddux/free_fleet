@@ -23,12 +23,18 @@
 #include <rmf_fleet_msgs/msg/mode_request.hpp>
 #include <rmf_fleet_msgs/msg/path_request.hpp>
 #include <rmf_fleet_msgs/msg/destination_request.hpp>
+#include <rmf_fleet_msgs/msg/robot_image.hpp>
+#include <rmf_fleet_msgs/msg/header.hpp>
+#include <rmf_fleet_msgs/msg/image_pixel.hpp>
 
 #include <free_fleet/messages/Location.hpp>
 #include <free_fleet/messages/RobotState.hpp>
 #include <free_fleet/messages/ModeRequest.hpp>
 #include <free_fleet/messages/PathRequest.hpp>
 #include <free_fleet/messages/DestinationRequest.hpp>
+#include <free_fleet/messages/RobotImage.hpp>
+#include <free_fleet/messages/Header.hpp>
+#include <free_fleet/messages/ImagePixel.hpp>
 
 namespace free_fleet
 {
@@ -59,6 +65,18 @@ void to_ros_message(
 void to_ros_message(
     const messages::RobotState& in_msg,
     rmf_fleet_msgs::msg::RobotState& out_msg);
+
+void to_ros_message(
+    const messages::Header& in_msg,
+    rmf_fleet_msgs::msg::Header& out_msg);
+
+void to_ros_message(
+    const messages::ImagePixel& in_msg,
+    rmf_fleet_msgs::msg::ImagePixel& out_msg);
+
+void to_ros_message(
+    const messages::RobotImage& in_msg,
+    rmf_fleet_msgs::msg::RobotImage& out_msg);
 
 } // namespace ros2
 } // namespace free_fleet

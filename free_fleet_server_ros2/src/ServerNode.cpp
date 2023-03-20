@@ -99,6 +99,7 @@ void ServerNode::setup_config()
 {
   get_parameter("fleet_name", server_node_config.fleet_name);
   get_parameter("fleet_state_topic", server_node_config.fleet_state_topic);
+  get_parameter("fleet_image_topic", server_node_config.fleet_image_topic);
   get_parameter("mode_request_topic", server_node_config.mode_request_topic);
   get_parameter("path_request_topic", server_node_config.path_request_topic);
   get_parameter(
@@ -107,6 +108,8 @@ void ServerNode::setup_config()
   get_parameter("dds_domain", server_node_config.dds_domain);
   get_parameter("dds_robot_state_topic",
       server_node_config.dds_robot_state_topic);
+  get_parameter("dds_robot_image_topic",
+      server_node_config.dds_robot_image_topic);
   get_parameter("dds_mode_request_topic",
       server_node_config.dds_mode_request_topic);
   get_parameter("dds_path_request_topic",
@@ -118,6 +121,10 @@ void ServerNode::setup_config()
       server_node_config.update_state_frequency);
   get_parameter(
       "publish_state_frequency", server_node_config.publish_state_frequency);
+  get_parameter("update_image_frequency",
+      server_node_config.update_image_frequency);
+  get_parameter(
+      "publish_image_frequency", server_node_config.publish_image_frequency);
 
   get_parameter("translation_x", server_node_config.translation_x);
   get_parameter("translation_y", server_node_config.translation_y);
@@ -139,6 +146,8 @@ void ServerNode::start(Fields _fields)
   {
     WriteLock robot_states_lock(robot_states_mutex);
     robot_states.clear();
+    WriteLock robot_images_lock(robot_images_mutex);
+    robot_images.clear();
   }
 
   using namespace std::chrono_literals;
@@ -153,6 +162,13 @@ void ServerNode::start(Fields _fields)
   update_state_timer = create_wall_timer(
       100ms, std::bind(&ServerNode::update_state_callback, this),
       update_state_callback_group);
+
+  update_image_callback_group = create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive);
+
+  update_image_timer = create_wall_timer(
+      100ms, std::bind(&ServerNode::update_image_callback, this),
+      update_image_callback_group);
 
   // --------------------------------------------------------------------------
   // Second callback group that handles publishing fleet states to RMF, and
@@ -169,6 +185,18 @@ void ServerNode::start(Fields _fields)
       std::chrono::seconds(1) / server_node_config.publish_state_frequency,
       std::bind(&ServerNode::publish_fleet_state, this),
       fleet_state_pub_callback_group);
+
+  fleet_image_pub_callback_group = create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive);
+
+  fleet_image_pub =
+      create_publisher<rmf_fleet_msgs::msg::FleetImage>(
+          server_node_config.fleet_image_topic, 10);
+
+  fleet_image_pub_timer = create_wall_timer(
+      std::chrono::seconds(1) / server_node_config.publish_image_frequency,
+      std::bind(&ServerNode::publish_fleet_image, this),
+      fleet_image_pub_callback_group);
 
   // --------------------------------------------------------------------------
   // Mode request handling
@@ -363,6 +391,28 @@ void ServerNode::update_state_callback()
   }
 }
 
+void ServerNode::update_image_callback()
+{
+  std::vector<messages::RobotImage> new_robot_images;
+  fields.server->read_robot_images(new_robot_images);
+
+  for (const messages::RobotImage& ff_ri : new_robot_images)
+  {
+    rmf_fleet_msgs::msg::RobotImage ros_ri;
+    to_ros_message(ff_ri, ros_ri);
+
+    WriteLock robot_images_lock(robot_images_mutex);
+    auto it = robot_images.find(ros_ri.robot_name);
+    if (it == robot_images.end())
+      RCLCPP_INFO(
+          get_logger(),
+          "registered a new robot image stream from: [%s]",
+          ros_ri.robot_name.c_str());
+
+    robot_images[ros_ri.robot_name] = ros_ri;
+  }
+}
+
 void ServerNode::publish_fleet_state()
 {
   rmf_fleet_msgs::msg::FleetState fleet_state;
@@ -406,6 +456,50 @@ void ServerNode::publish_fleet_state()
     fleet_state.robots.push_back(rmf_frame_rs);
   }
   fleet_state_pub->publish(fleet_state);
+}
+
+void ServerNode::publish_fleet_image()
+{
+  rmf_fleet_msgs::msg::FleetImage fleet_image;
+  fleet_image.name = server_node_config.fleet_name;
+  fleet_image.robots.clear();
+
+  ReadLock robot_images_lock(robot_images_mutex);
+  for (const auto it : robot_images)
+  {
+    const auto fleet_frame_ri = it.second;
+    rmf_fleet_msgs::msg::RobotImage rmf_frame_ri;
+
+    //transform_fleet_to_rmf(fleet_frame_rs.location, rmf_frame_rs.location);
+
+    // RCLCPP_INFO(
+    //     get_logger(),
+    //     "robot location: (%.1f, %.1f, %.1f) -> (%.1f, %.1f, %.1f)",
+    //     fleet_frame_rs.location.x,
+    //     fleet_frame_rs.location.y,
+    //     fleet_frame_rs.location.yaw,
+    //     rmf_frame_rs.location.x,
+    //     rmf_frame_rs.location.y,
+    //     rmf_frame_rs.location.yaw);
+
+    rmf_frame_ri.fleet_name = fleet_frame_ri.fleet_name;
+    rmf_frame_ri.robot_name = fleet_frame_ri.robot_name;
+    rmf_frame_ri.image_header = fleet_frame_ri.image_header;
+    rmf_frame_ri.height = fleet_frame_ri.height;
+    rmf_frame_ri.width = fleet_frame_ri.width;
+    rmf_frame_ri.encoding = fleet_frame_ri.encoding;
+    rmf_frame_ri.is_bigendian = fleet_frame_ri.is_bigendian;
+    rmf_frame_ri.step = fleet_frame_ri.step;
+
+    rmf_frame_ri.data.clear();
+    for (const auto& fleet_frame_data_pixel : fleet_frame_ri.data)
+    {
+      rmf_frame_ri.data.push_back(fleet_frame_data_pixel);
+    }
+
+    fleet_image.robots.push_back(rmf_frame_ri);
+  }
+  fleet_image_pub->publish(fleet_image);
 }
 
 } // namespace ros2

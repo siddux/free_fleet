@@ -31,18 +31,23 @@ struct ServerNodeConfig
   std::string fleet_name = "fleet_name";
 
   std::string fleet_state_topic = "fleet_state";
+  std::string fleet_image_topic = "fleet_image";
   std::string mode_request_topic = "mode_request";
   std::string path_request_topic = "path_request";
   std::string destination_request_topic = "destination_request";
 
   int dds_domain = 42;
   std::string dds_robot_state_topic = "robot_state";
+  std::string dds_robot_image_topic = "robot_image";
   std::string dds_mode_request_topic = "mode_request";
   std::string dds_path_request_topic = "path_request";
   std::string dds_destination_request_topic = "destination_request";
 
   double update_state_frequency = 10.0;
   double publish_state_frequency = 10.0;
+
+  double update_image_frequency = 10.0;
+  double publish_image_frequency = 10.0;
 
   // the transformation order of operations from the server to the client is:
   // 1) scale
