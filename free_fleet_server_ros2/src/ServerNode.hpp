@@ -35,6 +35,7 @@
 #include <rmf_fleet_msgs/msg/destination_request.hpp>
 #include <rmf_fleet_msgs/msg/robot_image.hpp>
 #include <rmf_fleet_msgs/msg/fleet_image.hpp>
+#include "sensor_msgs/msg/image.hpp"
 
 #include <free_fleet/Server.hpp>
 #include <free_fleet/messages/Location.hpp>
@@ -129,7 +130,7 @@ private:
 
   std::mutex robot_images_mutex;
 
-  std::unordered_map<std::string, rmf_fleet_msgs::msg::RobotImage>
+  std::unordered_map<std::string, sensor_msgs::msg::Image>
       robot_images;
 
   void update_image_callback();

@@ -105,14 +105,6 @@ void to_ros_message(
 }
 
 void to_ros_message(
-    const messages::Header& _in_msg,
-    rmf_fleet_msgs::msg::Header& _out_msg)
-{
-  _out_msg.seq = _in_msg.seq;
-  _out_msg.frame_id= _in_msg.frame_id;
-}
-
-void to_ros_message(
     const messages::ImagePixel& _in_msg,
     rmf_fleet_msgs::msg::ImagePixel& _out_msg)
 {
@@ -121,11 +113,9 @@ void to_ros_message(
 
 void to_ros_message(
     const messages::RobotImage& _in_msg,
-    rmf_fleet_msgs::msg::RobotImage& _out_msg)
+    sensor_msgs::msg::Image& _out_msg)
 {
-  _out_msg.fleet_name = _in_msg.fleet_name;
-  _out_msg.robot_name = _in_msg.robot_name;
-  to_ros_message(_in_msg.image_header, _out_msg.image_header);
+  _out_msg.header.frame_id = _in_msg.image_header.frame_id;
   _out_msg.height = _in_msg.height;
   _out_msg.width = _in_msg.width;
   _out_msg.encoding = _in_msg.encoding;
@@ -137,7 +127,7 @@ void to_ros_message(
   {
     rmf_fleet_msgs::msg::ImagePixel tmp_pxl;
     to_ros_message(_in_msg.data[i], tmp_pxl);
-    _out_msg.data.push_back(tmp_pxl);
+    _out_msg.data.push_back(tmp_pxl.pixel);
   }
 }
 

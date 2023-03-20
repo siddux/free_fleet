@@ -26,6 +26,7 @@
 #include <rmf_fleet_msgs/msg/robot_image.hpp>
 #include <rmf_fleet_msgs/msg/header.hpp>
 #include <rmf_fleet_msgs/msg/image_pixel.hpp>
+#include "sensor_msgs/msg/image.hpp"
 
 #include <free_fleet/messages/Location.hpp>
 #include <free_fleet/messages/RobotState.hpp>
@@ -76,7 +77,7 @@ void to_ros_message(
 
 void to_ros_message(
     const messages::RobotImage& in_msg,
-    rmf_fleet_msgs::msg::RobotImage& out_msg);
+    sensor_msgs::msg::Image& out_msg);
 
 } // namespace ros2
 } // namespace free_fleet
