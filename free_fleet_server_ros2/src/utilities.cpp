@@ -105,29 +105,22 @@ void to_ros_message(
 }
 
 void to_ros_message(
-    const messages::ImagePixel& _in_msg,
-    rmf_fleet_msgs::msg::ImagePixel& _out_msg)
-{
-  _out_msg.pixel = _in_msg.pixel;
-}
-
-void to_ros_message(
     const messages::RobotImage& _in_msg,
-    sensor_msgs::msg::Image& _out_msg)
+    rmf_fleet_msgs::msg::RobotImage& _out_msg)
 {
-  _out_msg.header.frame_id = _in_msg.image_header.frame_id;
-  _out_msg.height = _in_msg.height;
-  _out_msg.width = _in_msg.width;
-  _out_msg.encoding = _in_msg.encoding;
-  _out_msg.is_bigendian = _in_msg.is_bigendian;
-  _out_msg.step = _in_msg.step;
+  _out_msg.fleet_name = _in_msg.fleet_name;
+  _out_msg.robot_name = _in_msg.robot_name;
+  _out_msg.image.header.frame_id = _in_msg.image_header.frame_id;
+  _out_msg.image.height = _in_msg.height;
+  _out_msg.image.width = _in_msg.width;
+  _out_msg.image.encoding = _in_msg.encoding;
+  _out_msg.image.is_bigendian = _in_msg.is_bigendian;
+  _out_msg.image.step = _in_msg.step;
 
-  _out_msg.data = {};
+  _out_msg.image.data = {};
   for (size_t i = 0; i < _in_msg.data.size(); ++i)
   {
-    rmf_fleet_msgs::msg::ImagePixel tmp_pxl;
-    to_ros_message(_in_msg.data[i], tmp_pxl);
-    _out_msg.data.push_back(tmp_pxl.pixel);
+    _out_msg.image.data.push_back(_in_msg.data[i].pixel);
   }
 }
 

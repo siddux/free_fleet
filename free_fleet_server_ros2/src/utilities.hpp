@@ -24,9 +24,6 @@
 #include <rmf_fleet_msgs/msg/path_request.hpp>
 #include <rmf_fleet_msgs/msg/destination_request.hpp>
 #include <rmf_fleet_msgs/msg/robot_image.hpp>
-#include <rmf_fleet_msgs/msg/header.hpp>
-#include <rmf_fleet_msgs/msg/image_pixel.hpp>
-#include "sensor_msgs/msg/image.hpp"
 
 #include <free_fleet/messages/Location.hpp>
 #include <free_fleet/messages/RobotState.hpp>
@@ -68,16 +65,8 @@ void to_ros_message(
     rmf_fleet_msgs::msg::RobotState& out_msg);
 
 void to_ros_message(
-    const messages::Header& in_msg,
-    rmf_fleet_msgs::msg::Header& out_msg);
-
-void to_ros_message(
-    const messages::ImagePixel& in_msg,
-    rmf_fleet_msgs::msg::ImagePixel& out_msg);
-
-void to_ros_message(
     const messages::RobotImage& in_msg,
-    sensor_msgs::msg::Image& out_msg);
+    rmf_fleet_msgs::msg::RobotImage& out_msg);
 
 } // namespace ros2
 } // namespace free_fleet

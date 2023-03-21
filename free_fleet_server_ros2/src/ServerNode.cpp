@@ -398,7 +398,7 @@ void ServerNode::update_image_callback()
 
   for (const messages::RobotImage& ff_ri : new_robot_images)
   {
-    sensor_msgs::msg::Image ros_ri;
+    rmf_fleet_msgs::msg::RobotImage ros_ri;
     to_ros_message(ff_ri, ros_ri);
 
     WriteLock robot_images_lock(robot_images_mutex);
